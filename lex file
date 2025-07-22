@@ -1,0 +1,36 @@
+%{ 
+#include <iostream> 
+#include <string> 
+#include <cctype> 
+#include "highlight.hpp" 
+
+extern int yylineno; 
+%} 
+
+%option noyywrap 
+
+KEYWORDS  (int|float|if|else|while|return) 
+ID        
+[a-zA-Z_][a-zA-Z0-9_]* 
+NUMBER    [0-9]+ 
+OPERATOR  [\+\-\*/=] 
+PUNCT     [\(\)\{\};,] 
+COMMENT   (\/\/.*|\/\*.*\*\/) 
+%% 
+
+{KEYWORDS}   { highlight_token("keyword", yytext); } 
+{ID}         
+{ highlight_token("identifier", yytext); } 
+{NUMBER}     { highlight_token("literal", yytext); } 
+{OPERATOR}   { highlight_token("operator", yytext); } 
+{PUNCT}      { highlight_token("punctuation", yytext); } 
+{COMMENT}    { highlight_token("comment", yytext); } 
+[ \t\n]+     
+{ /* skip whitespace */ } 
+%% 
+
+
+int main() { 
+yylex(); 
+return 0; 
+} 
